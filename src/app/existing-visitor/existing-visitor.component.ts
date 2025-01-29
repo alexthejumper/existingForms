@@ -12,6 +12,8 @@ import {BadgeApiService} from '../badge-api.service';
 import {ReasonApiService} from '../reason-api.service';
 import {VisitorApiService} from '../visitor-api.service';
 import {SnackbarService} from '../snackbar.service';
+import {QrcodeDialogComponent} from '../qrcode-dialog/qrcode-dialog.component';
+import {SignatureDialogComponent} from '../signature-dialog/signature-dialog.component';
 
 @Component({
   selector: 'visitor-fo-existing-visitor',

@@ -10,13 +10,15 @@ import { QrcodeDialogComponent } from './qrcode-dialog/qrcode-dialog.component';
 import {MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
 import {QRCodeModule} from 'angularx-qrcode';
 import {MatButtonModule} from '@angular/material/button';
+import { SignatureDialogComponent } from './signature-dialog/signature-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ExistingVisitorComponent,
     SnackBarComponent,
-    QrcodeDialogComponent
+    QrcodeDialogComponent,
+    SignatureDialogComponent
   ],
   imports: [
     BrowserModule,
