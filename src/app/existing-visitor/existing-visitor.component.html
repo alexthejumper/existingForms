@@ -1,0 +1,243 @@
+<form
+(ngSubmit)="onSubmit()"
+[formGroup]="registrationForm"
+class="form-container"
+>
+    <h2 class="heading-visitor">Exisiting visitor check in</h2>
+    <mat-divider class="divider-line"></mat-divider>
+
+    <div class="field-container">
+        <div class="text-field">
+            <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input class="input-field" formControlName="firstName" id="first-name" matInput type="text" />
+                <mat-error
+                *ngIf="registrationForm.get('firstName')?.hasError('required') && registrationForm.get('firstName')?.touched"
+                >
+            First name is required
+            </mat-error>
+
+            <mat-error
+            *ngIf="registrationForm.get('firstName')?.hasError('minlength')"
+            >
+            First Name must be at least 2 characters long
+            </mat-error>
+            <mat-error
+            *ngIf="registrationForm.get('firstName')?.hasError('pattern')"
+            >
+            First name must contain only letters
+        </mat-error>
+            </mat-form-field>
+        </div>
+
+
+
+        <div class="text-field">
+            <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Last Name</mat-label>
+
+                <input class="input-field" formControlName="lastName" id="last-name" matInput type="text" />
+
+                <mat-error
+                *ngIf="registrationForm.get('lastName')?.hasError('required') && registrationForm.get('lastName')?.touched"
+                >
+            Last name is required
+        </mat-error>
+
+
+        <mat-error
+        *ngIf="registrationForm.get('lastName')?.hasError('minlength')"
+        >
+        Last name mut be at least 2 charachters long
+    </mat-error>
+
+
+    <mat-error
+    *ngIf="registrationForm.get('lastName')?.hasError('pattern')"
+    >
+    Last name must contain only letters
+    </mat-error>
+    </mat-form-field>
+    </div>
+
+
+    <div class="text-field">
+        <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Company name</mat-label>
+            <input
+            [matAutocomplete]="auto"
+            class="input-field"
+            formControlName="companyName"
+            id="company-name"
+            matInput
+            placeholder="Company Name"
+            type="text"
+            />
+
+            <mat-autocomplete
+            #auto="matAutocomplete"
+            (optionSelected)="onCompanySelect($event)"     
+            autoActiveFirstOption
+            id="company-name-autocomplete"       
+            >
+            <mat-option
+            *ngFor="let option of filteredOptions$ | async"
+            [value]="option"
+            >
+        {{ option.companyName}}
+        </mat-option>        
+        </mat-autocomplete>
+        </mat-form-field>
+    </div>
+
+
+    <div class="text-field">
+        <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Contact number</mat-label>
+            <input
+            class="input-field"
+            formControlName="contactNumber"
+            id="contact-number"
+            matInput
+            type="text"
+            />
+
+            <mat-error
+            *ngIf="registrationForm.get('contactNumber')?.hasError('pattern')"
+            >
+            Contact number must contain only numbers
+            </mat-error>
+
+            <mat-error
+            *ngIf="registrationForm.get('contactNumber')?.hasError('maxLength')"
+            >
+            Contact number cannot exceed 10 digits
+        </mat-error>
+        </mat-form-field>
+    </div>
+
+
+    <div class="text-field">
+        <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Visit type</mat-label>
+            <mat-select
+            (selectionChange)="onReasonsOfVisitChange($event)"
+            formControlName="reasonId"
+            id="Visit-type"
+            >
+            <mat-option disabled value="">Select visit type</mat-option>
+            <mat-option *ngFor="let reason of reason" [value]="reason.reasonId">
+                {{ reason.reason }}
+            </mat-option>
+            <mat-option value="otherReason">Other Reason</mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="registrationForm.get('reasonId')?.hasError('required')">
+            Details of visirt are required
+        </mat-error>
+        </mat-form-field>
+    </div>
+
+
+    <div *ngIf="showOtherField" class="text-field">
+        <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Please specify</mat-label>
+            <input
+            class="input-field"
+            formControlName="otherReason"
+            id="other-reason"
+            matInput
+            type="text"
+            />
+
+            <mat-error
+            *ngIf="registrationForm.get('otherReason')?.hasError('pattern')"
+            >
+            Other details cannot containe numbers
+        </mat-error>
+
+        <mat-error *ngIf="registrationForm.get('otherReason')?.hasError('required')">
+            This field is required
+        </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="field-container">
+        <div class="text-field">
+            <mat-form-field appearance="outline">
+                <mat-label>Attendee Name</mat-label>
+                <input 
+                id="attendee-name"
+                class="input-field"
+                formControlName="attendeeName"
+                matInput
+                type="text"
+                />
+
+                <mat-error
+                *ngIf="registrationForm.get('attendeeName')?.hasError('minLength')"
+                >
+                Attendee name must be at least 2 charachters long
+                </mat-error>
+
+                <mat-error
+                *ngIf="registrationForm.get('attendeeName')?.hasError('pattern')"
+                >
+                Attendee name must contain only letters
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    </div>
+
+
+
+
+    <div class="qrcode-signature-button-row">
+        <button
+        (click)="openQRCodeDialog()"
+        [ngClass]="{ success: qrCodeSuccess }"
+        class="qrcode-signature-custom-button"
+        id="scan-badge-button"
+        mat-raised-button
+        type="button"
+        >
+        <mat-icon>check_circle</mat-icon>
+        Scan badge
+    </button>
+
+    <button
+    (click)="openSignatureDialog()"
+    [ngClass]="{ success : signatureSuccess }"
+    class="qrcode-signature-custom-button"
+    id="add-signature-button"
+    mat-raised-button
+    type="button"
+    >
+    <mat-icon>check_circle</mat-icon>
+    Add Signature
+    </button>
+    </div>
+
+    <div class="button-container">
+        <button
+        color="primary"
+        class="bt-menu"
+        id="submit-form-button"
+        mat-raised-button
+        type="submit"
+        >
+        Submit Form
+        </button>
+
+        <button
+        (click)="backToMainMenu()"
+        class="btn-menu"
+        id="back-to-main-menu-button"
+        mat-raised-button
+        type="button"
+        >
+        Back to Main Menu
+        </button>
+    </div>
+</form>
