@@ -24,6 +24,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
   reason: ReasonRequest[] = [];
   filteredOptions$!: Observable<CompanyRequest[]>;
   qrCodeSuccess = false;
+  signatureSuccess = false;
   badgeId!: string;
   visitorId!: string;
   signatureDataUrl!: string;
@@ -242,7 +243,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     dialogRef.afterClosed().subscribe((signatureDataUrl) => {
       if (signatureDataUrl) {
         this.signatureDataUrl = signatureDataUrl;
-        this.signatureDataSuccess = true;
+        this.signatureSuccess = true;
         this.snackBarService.open('Signature Added Successfully');
       }
     });

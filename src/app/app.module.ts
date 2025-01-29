@@ -6,17 +6,27 @@ import { AppComponent } from './app.component';
 import { ExistingVisitorComponent } from './existing-visitor/existing-visitor.component';
 import { SnackBarComponent } from './snack-bar/snack-bar.component';
 import {MatIconModule} from '@angular/material/icon';
+import { QrcodeDialogComponent } from './qrcode-dialog/qrcode-dialog.component';
+import {MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
+import {QRCodeModule} from 'angularx-qrcode';
+import {MatButtonModule} from '@angular/material/button';
 
 @NgModule({
   declarations: [
     AppComponent,
     ExistingVisitorComponent,
-    SnackBarComponent
+    SnackBarComponent,
+    QrcodeDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogContent,
+    MatDialogActions,
+    QRCodeModule,
+    MatDialogTitle,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
