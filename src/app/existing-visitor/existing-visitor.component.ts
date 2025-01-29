@@ -3,10 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Subject, switchMap, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs';
-import { CompanyRequest, ReasonRequest, VisitorLogRequest } from '../model-back';
+import {CompanyRequest, ReasonRequest, VisitorLogRequest, GetReasonResponse, VisitorRequest} from '../model-back';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
+import {CompanyApiService} from '../company-api.service';
+import {BadgeApiService} from '../badge-api.service';
+import {ReasonApiService} from '../reason-api.service';
+import {VisitorApiService} from '../visitor-api.service';
+import {SnackbarService} from '../snackbar.service';
 
 @Component({
   selector: 'visitor-fo-existing-visitor',
@@ -152,7 +157,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     }
 
     if (this.qrCodeSuccess && this.signatureSuccess) {
-      const reasonId = 
+      const reasonId =
       this.registrationForm.value.reasonId === 'otherReason'
       ? null
       : this.registrationForm.value.reasonId;
@@ -162,13 +167,14 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
         lastName: this.registrationForm.value.lastName,
         contactNumber: this.registrationForm.value.contactNumber,
         company: {
-          companyId: this.registrationForm.value.companyId
+          companyId: this.registrationForm.value.companyId,
+          companyName: this.registrationForm.value.companyName
         }
       };
 
       const visitorLogRequest: VisitorLogRequest = {
         visitor: {
-          firstName: this.registrationForm.value.firsName,
+          firstName: this.registrationForm.value.firstName,
           lastName: this.registrationForm.value.lastName,
           contactNumber: this.registrationForm.value.contactNumber,
           company: {
@@ -211,7 +217,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
 
   openQRCodeDialog(): void {
     const dialogRef = this.dialog.open(QrcodeDialogComponent);
-  
+
     dialogRef.afterClosed().subscribe({
       next: (badgeId) => {
         if (badgeId) {
@@ -241,5 +247,5 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       }
     });
   }
-  
+
 }
