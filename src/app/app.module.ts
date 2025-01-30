@@ -11,6 +11,14 @@ import {MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/mater
 import {QRCodeModule} from 'angularx-qrcode';
 import {MatButtonModule} from '@angular/material/button';
 import { SignatureDialogComponent } from './signature-dialog/signature-dialog.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {HttpClientModule} from '@angular/common/http';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -28,7 +36,15 @@ import { SignatureDialogComponent } from './signature-dialog/signature-dialog.co
     MatDialogActions,
     QRCodeModule,
     MatDialogTitle,
-    MatButtonModule
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,
+    MatSelectModule,
+    MatInputModule,
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

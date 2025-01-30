@@ -3,7 +3,7 @@
 [formGroup]="registrationForm"
 class="form-container"
 >
-    <h2 class="heading-visitor">Exisiting visitor check in</h2>
+    <h2 class="heading-visitor">Existing visitor check in</h2>
     <mat-divider class="divider-line"></mat-divider>
 
     <div class="field-container">
@@ -30,8 +30,6 @@ class="form-container"
             </mat-form-field>
         </div>
 
-
-
         <div class="text-field">
             <mat-form-field appearance="outline" class="width-100">
                 <mat-label>Last Name</mat-label>
@@ -48,7 +46,7 @@ class="form-container"
         <mat-error
         *ngIf="registrationForm.get('lastName')?.hasError('minlength')"
         >
-        Last name mut be at least 2 charachters long
+        Last name mut be at least 2 characters long
     </mat-error>
 
 
@@ -61,7 +59,7 @@ class="form-container"
     </div>
 
 
-    <div class="text-field">
+        <div class="text-field">
         <mat-form-field appearance="outline" class="width-100">
             <mat-label>Company name</mat-label>
             <input
@@ -76,22 +74,22 @@ class="form-container"
 
             <mat-autocomplete
             #auto="matAutocomplete"
-            (optionSelected)="onCompanySelect($event)"     
+            (optionSelected)="onCompanySelect($event)"
             autoActiveFirstOption
-            id="company-name-autocomplete"       
+            id="company-name-autocomplete"
             >
             <mat-option
             *ngFor="let option of filteredOptions$ | async"
             [value]="option"
             >
         {{ option.companyName}}
-        </mat-option>        
+        </mat-option>
         </mat-autocomplete>
         </mat-form-field>
     </div>
 
 
-    <div class="text-field">
+        <div class="text-field">
         <mat-form-field appearance="outline" class="width-100">
             <mat-label>Contact number</mat-label>
             <input
@@ -117,81 +115,94 @@ class="form-container"
     </div>
 
 
-    <div class="text-field">
+        <!--<div class="text-field">
+            <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Visit type</mat-label>
+                <mat-select
+                (selectionChange)="onReasonsOfVisitChange($event)"
+                formControlName="reasonId"
+                id="Visit-type"
+                >
+                <mat-option disabled value="">Select visit type</mat-option>
+                <mat-option *ngFor="let reason of reason" [value]="reason.reasonId">
+                    {{ reason.reason }}
+                </mat-option>
+                <mat-option value="otherReason">Other Reason</mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="registrationForm.get('reasonId')?.hasError('required')">
+                Details of visit are required
+            </mat-error>
+            </mat-form-field>
+        </div>-->
+
+      <div class="text-field">
         <mat-form-field appearance="outline" class="width-100">
-            <mat-label>Visit type</mat-label>
-            <mat-select
-            (selectionChange)="onReasonsOfVisitChange($event)"
-            formControlName="reasonId"
-            id="Visit-type"
-            >
+          <mat-label>Visit type</mat-label>
+          <mat-select formControlName="reasonId" id="Visit-type">
             <mat-option disabled value="">Select visit type</mat-option>
-            <mat-option *ngFor="let reason of reason" [value]="reason.reasonId">
-                {{ reason.reason }}
-            </mat-option>
-            <mat-option value="otherReason">Other Reason</mat-option>
-        </mat-select>
-
-        <mat-error *ngIf="registrationForm.get('reasonId')?.hasError('required')">
-            Details of visirt are required
-        </mat-error>
+            <mat-option value="880e8400-e29b-41d4-a716-446655440000">Meeting</mat-option>
+            <mat-option value="880e8400-e29b-41d4-a716-446655440001">Interview</mat-option>
+            <mat-option value="4">Other</mat-option>
+          </mat-select>
+          <mat-error *ngIf="registrationForm.get('reasonId')?.hasError('required')">
+            Details of visit are required
+          </mat-error>
         </mat-form-field>
-    </div>
+      </div>
 
 
-    <div *ngIf="showOtherField" class="text-field">
-        <mat-form-field appearance="outline" class="width-100">
-            <mat-label>Please specify</mat-label>
-            <input
-            class="input-field"
-            formControlName="otherReason"
-            id="other-reason"
-            matInput
-            type="text"
-            />
 
-            <mat-error
-            *ngIf="registrationForm.get('otherReason')?.hasError('pattern')"
-            >
-            Other details cannot containe numbers
-        </mat-error>
-
-        <mat-error *ngIf="registrationForm.get('otherReason')?.hasError('required')">
-            This field is required
-        </mat-error>
-        </mat-form-field>
-    </div>
-
-    <div class="field-container">
-        <div class="text-field">
-            <mat-form-field appearance="outline">
-                <mat-label>Attendee Name</mat-label>
-                <input 
-                id="attendee-name"
+      <div *ngIf="showOtherField" class="text-field">
+            <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Please specify</mat-label>
+                <input
                 class="input-field"
-                formControlName="attendeeName"
+                formControlName="otherReason"
+                id="other-reason"
                 matInput
                 type="text"
                 />
 
                 <mat-error
-                *ngIf="registrationForm.get('attendeeName')?.hasError('minLength')"
+                *ngIf="registrationForm.get('otherReason')?.hasError('pattern')"
                 >
-                Attendee name must be at least 2 charachters long
-                </mat-error>
+                Other details cannot contain numbers
+            </mat-error>
 
-                <mat-error
-                *ngIf="registrationForm.get('attendeeName')?.hasError('pattern')"
-                >
-                Attendee name must contain only letters
-                </mat-error>
+            <mat-error *ngIf="registrationForm.get('otherReason')?.hasError('required')">
+                This field is required
+            </mat-error>
             </mat-form-field>
         </div>
+
+        <div class="field-container">
+            <div class="text-field">
+                <mat-form-field appearance="outline">
+                    <mat-label>Attendee Name</mat-label>
+                    <input
+                    id="attendee-name"
+                    class="input-field"
+                    formControlName="attendeeName"
+                    matInput
+                    type="text"
+                    />
+
+                    <mat-error
+                    *ngIf="registrationForm.get('attendeeName')?.hasError('minLength')"
+                    >
+                    Attendee name must be at least 2 characters long
+                    </mat-error>
+
+                    <mat-error
+                    *ngIf="registrationForm.get('attendeeName')?.hasError('pattern')"
+                    >
+                    Attendee name must contain only letters
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
     </div>
-    </div>
-
-
-
 
     <div class="qrcode-signature-button-row">
         <button

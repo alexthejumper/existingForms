@@ -1,14 +1,14 @@
 export interface VisitorLogRequest {
     visitor: VisitorRequest;
-    badgeId: string;
-    reasonId: string;
-    otherReason?: string;
+    reason: ReasonRequest2;
+    badge: BadgeRequest;
     signature: string;
     attendeeName: string;
 }
 
 
 export interface VisitorRequest {
+    visitorId: string,
     firstName: string;
     lastName: string;
     contactNumber: string;
@@ -23,6 +23,12 @@ export interface CompanyRequest {
 export interface ReasonRequest {
     reasonId: string;
     reason: string;
+}
+
+export interface ReasonRequest2 {
+  reasonId: string;
+  reasonName: string;
+  archived: boolean;
 }
 
 
@@ -55,4 +61,10 @@ export interface Pageable {
 export interface BadgeValidityResponse {
   valid: boolean;
   message?: string;
+}
+
+export interface BadgeRequest {
+  badgeId: string,
+  identification: string,
+  badgeName: string
 }

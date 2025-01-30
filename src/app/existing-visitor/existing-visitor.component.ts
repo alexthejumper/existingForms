@@ -32,6 +32,12 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
   signatureDataUrl!: string;
   private destroy$: Subject<void> = new Subject<void>();
 
+  reasonName!: string;
+  archived!: boolean;
+
+  identification!: string;
+  badgeName!: string;
+
 
   constructor(
     private fb: FormBuilder,
@@ -82,22 +88,33 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       firstName: 'John',
       lastName: 'Doe',
       contactNumber: '1234567890',
-      reasonId: 1,
-      companyId: 1,
+      reasonId: "880e8400-e29b-41d4-a716-446655440001",
+      companyId: "550e8400-e29b-41d4-a716-446655440000",
       attendeeName: 'John Doe',
-      otherReason: 'Test',
-      companyName: 'Google',
-      badgeId: 'AB123'
+      otherReason: '',
+      companyName: 'TechCorp',
     };
+
+    this.signatureDataUrl = "johndoe";
+    this.visitorId = "660e8400-e29b-41d4-a716-446655440000";
+    this.reasonName = "Interview";
+    this.archived = false;
+
+    this.badgeId =  "770e8400-e29b-41d4-a716-446655440000";
+    this.identification = "ID001";
+    this.badgeName = "Visitor Badge";
 
     this.registrationForm.patchValue({
       firstName: fetchedData.firstName,
       lastName: fetchedData.lastName,
       contactNumber: fetchedData.contactNumber,
-      otherReason: fetchedData.otherReason,
+      reasonId: fetchedData.reasonId.toString(),
       companyName: fetchedData.companyName,
-      badgeId: fetchedData.badgeId
+      companyId: fetchedData.companyId,
+      badgeId: this.badgeId,
     });
+
+    console.log(fetchedData.reasonId);
 
     this.registrationForm.get('firstName')?.disable();
     this.registrationForm.get('lastName')?.disable();
@@ -159,7 +176,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       return;
     }
 
-    if (this.qrCodeSuccess && this.signatureSuccess) {
+    /*if (this.qrCodeSuccess && this.signatureSuccess) {
       const reasonId =
       this.registrationForm.value.reasonId === 'otherReason'
       ? null
@@ -207,7 +224,70 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
           );
         }
       });
-    }
+    }*/
+
+
+    const reasonId =
+      this.registrationForm.value.reasonId === 'otherReason'
+        ? null
+        : this.registrationForm.value.reasonId;
+
+
+    console.log(this.registrationForm.value.firstName);
+
+    const visitorRequest: VisitorRequest = {
+      visitorId: this.visitorId,
+      firstName: this.registrationForm.get('firstName')?.value || '',
+      lastName: this.registrationForm.get('lastNam')?.value || '',
+      contactNumber: this.registrationForm.value.contactNumber,
+      company: {
+        companyId: this.registrationForm.value.companyId,
+        companyName: this.registrationForm.value.companyName
+      }
+    };
+
+    const visitorLogRequest: VisitorLogRequest = {
+      visitor: {
+        visitorId: this.visitorId,
+        firstName: this.registrationForm.value.firstName,
+        lastName: this.registrationForm.value.lastName,
+        contactNumber: this.registrationForm.value.contactNumber,
+        company: {
+          companyId: this.registrationForm.value.companyId,
+          companyName: this.registrationForm.value.companyName
+        }
+      },
+
+      reason: {
+        reasonId: reasonId,
+        reasonName: this.reasonName,
+        archived: this.archived
+      },
+
+      badge: {
+        badgeId: this.badgeId,
+        identification: this.identification,
+        badgeName: this.badgeName
+      },
+      signature: this.signatureDataUrl,
+      attendeeName: this.registrationForm.value.attendeeName
+    };
+
+    const createVisitorLog$ = this.visitorApiService.createExistingVisitorLog(visitorLogRequest);
+    const updateVisitor$ = this.visitorApiService.updateExistingVisitor(visitorRequest);
+
+    forkJoin([createVisitorLog$, updateVisitor$]).subscribe({
+      next: () => {
+        this.registrationForm.reset();
+        this.showOtherField = false;
+        this.snackBarService.open('Visitor log created and visitor updated.');
+      },
+      error: (error) => {
+        this.snackBarService.open(
+          error.message || 'Failed to create or update visitor log'
+        );
+      }
+    });
 
     this.qrCodeSuccess = false;
     this.signatureSuccess = false;

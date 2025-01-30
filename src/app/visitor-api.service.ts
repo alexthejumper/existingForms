@@ -28,6 +28,7 @@ export class VisitorApiService {
   }
 
   updateExistingVisitor(visitorRequest: VisitorRequest): Observable<VisitorRequest> {
+    console.log(visitorRequest.firstName);
     return this.httpClient.put<VisitorRequest>(
       `${this.visitorBaseUrl}/existing-visitor`,
       visitorRequest
