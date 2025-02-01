@@ -1,0 +1,216 @@
+<form
+(ngSubmit)="onSubmit()"
+[formGroup]="registrationForm"
+class="form-container"
+>
+  <h2 class="heading-visitor">NEW VISITOR CHECK IN</h2>
+
+  <mat-divider class="divider-line"></mat-divider>
+
+  <div class="field-container">
+    <div class="text-field">
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input id="first-name" class="input-field" formControlName="firstName" matInput type="text"/>
+
+        <mat-error
+          *ngIf="registrationForm.get('firstName')?.hasError('required') && registrationForm.get('firstName')?.touched"
+        >
+          First Name is required
+        </mat-error>
+
+        <mat-error
+          *ngIf="registrationForm.get('firstName')?.hasError('minlength')"
+        >
+          First Name must be at least 2 characters long
+        </mat-error>
+
+        <mat-error
+          *ngIf="registrationForm.get('firstName')?.hasError('pattern')"
+        >
+          First Name must contain only letters
+        </mat-error>
+
+      </mat-form-field>
+    </div>
+
+
+    <div class="text-field">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label>Last Name</mat-label>
+        <input id="last-name" class="input-field" formControlName="lastName" matInput type="text"/>
+
+        <mat-error
+          *ngIf="registrationForm.get('lastName')?.hasError('required') && registrationForm.get('lastName')?.touched"
+        >
+          Last Name is required
+        </mat-error>
+
+        <mat-error
+          *ngIf="registrationForm.get('lastName')?.hasError('minlength')"
+        >
+          Last Name must be at least 2 characters long
+        </mat-error>
+
+        <mat-error
+          *ngIf="registrationForm.get('lastName')?.hasError('pattern')"
+        >
+          Last Name must contain only letters
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+
+    <div class="text-field">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label>Company Name</mat-label>
+        <input id="company-name" class="input-field" formControlName="companyName" [matAutocomplete]="auto" matInput placeholder="Company Name" type="text"/>
+
+        <mat-autocomplete id="company-name-autocomplete" #auto="matAutocomplete" (optionSelected)="onCompanySelect($event)" autoActiveFirstOption>
+          <mat-option
+            *ngFor="let option of filteredOptions$ | async"
+            [value]="option"
+          >
+            {{ option.companyName }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <div class="text-field">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label>Contact Number</mat-label>
+        <input
+          id="contact-number"
+          class="input-field"
+          formControlName="contactNumber"
+          matInput
+          type="text"
+        />
+
+        <mat-error
+        *ngIf="registrationForm.get('contactNumber')?.hasError('pattern')"
+        >
+          Contact Number must contain only numbers
+        </mat-error>
+
+        <mat-error
+        *ngIf="registrationForm.get('contactNumber')?.hasError('maxLength')"
+        >
+          Contact Number cannot exceed 10 digits
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="text-field">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label>Visit Type</mat-label>
+        <mat-select
+        id="visit-type"
+        (selectionChange)="onReasonsOfVisitChange($event)"
+        formControlName="reasonId"
+        >
+          <mat-option disabled value="">Select Visit Type</mat-option>
+          <mat-option
+          *ngFor="let reason of reason"
+          [value]="reason.reasonId"
+          >
+            {{ reason.reason }}
+          </mat-option>
+          <mat-option value="otherReason">Other Reason</mat-option>
+        </mat-select>
+
+        <mat-error
+        *ngIf="registrationForm.get('reasonId')?.hasError('required')"
+        >
+          Details of Visit are required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+
+    <div *ngIf="showOtherField" class="text-field">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label>Please specify</mat-label>
+
+        <input id="other-reason" class="input-field" formControlName="otherReason" matInput type="text" />
+
+        <mat-error
+        *ngIf="registrationForm.get('otherReason')?.hasError('pattern')"
+        >
+          Other Details cannot contain numbers
+        </mat-error>
+
+        <mat-error
+          *ngIf="registrationForm.get('otherReason')?.hasError('required')"
+        >
+          This field is required.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="field-container">
+      <div class="text-field">
+        <mat-form-field appearance="outline">
+          <mat-label>Attendee Name</mat-label>
+
+          <input id="attendee-name" class="input-field" formControlName="attendeeName" matInput type="text" />
+
+          <mat-error
+          *ngIf="registrationForm.get('attendeeName')?.hasError('minlength')"
+          >
+            Attendee name must be at least 2 characters long
+          </mat-error>
+
+          <mat-error
+            *ngIf="registrationForm.get('attendeeName')?.hasError('pattern')"
+          >
+           Attendee name must contain only letters
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="qr-code-signature-button-row">
+        <button id="scan-badge-button" mat-raised-button class="qr-code-signature-custom-button" type="button" (click)="openQRCodeDialog()">
+          <mat-icon>check_circle</mat-icon>
+          Scan Badge
+        </button>
+
+        <button
+        [ngClass]="{ success: signatureSuccess }"
+        id="add-signature-button"
+        mat-raised-button
+        class="qrcode-signature-custom-button"
+        type="button"
+        (click)="openSignatureDialog()"
+        >
+          <mat-icon>check_circle</mat-icon>
+          Add Signature
+        </button>
+      </div>
+
+      <div class="button-container">
+        <button class="btn-menu" id="submit-form-button" color="primary" mat-raised-button type="submit">
+          Submit Form
+        </button>
+
+        <button id="back-to-main-menu-button" class="btn-menu" mat-raised-button type="button" (click)="backToMainMenu()">
+          Back to Main Menu
+        </button>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <p class="disclaimer-title">Disclaimer</p>
+      <p class="disclaimer-text">The information provided on this form... </p>
+    </div>
+
+    <div class="disclaimer">
+      <p class="disclaimer-title">Disclaimer</p>
+      <p class="disclaimer-text">The information provided on this form... </p>
+    </div>
+  </div>
+
+</form>
+
+

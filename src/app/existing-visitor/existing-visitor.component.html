@@ -10,7 +10,7 @@ class="form-container"
         <div class="text-field">
             <mat-form-field appearance="outline">
                 <mat-label>First Name</mat-label>
-                <input class="input-field" formControlName="firstName" id="first-name" matInput type="text" />
+                <input class="input-field" formControlName="firstName" [value]="fullName" id="first-name" matInput type="text" />
                 <mat-error
                 *ngIf="registrationForm.get('firstName')?.hasError('required') && registrationForm.get('firstName')?.touched"
                 >
@@ -66,6 +66,7 @@ class="form-container"
             [matAutocomplete]="auto"
             class="input-field"
             formControlName="companyName"
+            [value]="companyName"
             id="company-name"
             matInput
             placeholder="Company Name"

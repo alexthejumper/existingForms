@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { forkJoin, Subject, switchMap, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs';
 import {CompanyRequest, ReasonRequest, VisitorLogRequest, GetReasonResponse, VisitorRequest} from '../model-back';
@@ -38,6 +38,12 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
   identification!: string;
   badgeName!: string;
 
+  fullName!: string;
+  companyName!: string;
+
+  firstName!: string;
+  lastName!: string;
+
 
   constructor(
     private fb: FormBuilder,
@@ -47,7 +53,9 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     private badgeApiService: BadgeApiService,
     private readonly snackBarService: SnackbarService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+
   ) {
     this.registrationForm = this.fb.group({
       visitorId: [],
@@ -80,7 +88,22 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     );
 
     this.loadReasons();
-    this.loadPrefilledData();
+    //this.loadPrefilledData();
+
+    this.route.queryParams.subscribe(params => {
+      this.fullName = params['fullName'];
+      this.companyName = params['companyName'];
+
+      [this.firstName, this.lastName] = this.fullName.split(' ');
+    });
+
+    this.registrationForm.patchValue( {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      companyName: this.companyName
+    }    );
+
+    console.log("full name: " + this.fullName);
   }
 
   loadPrefilledData(): void {

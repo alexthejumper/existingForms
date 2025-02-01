@@ -1,0 +1,39 @@
+<h2 class="title" mat-dialog-title>Existing Visitor</h2>
+
+<div class="form-container">
+  <form [formGroup]="visitorForm">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Full Name</mat-label>
+      <input matInput placeholder="Enter full name" #fullNameInput formControlName="fullName" [matAutocomplete]="autoFullName">
+      <mat-autocomplete #autoFullName="matAutocomplete" (optionSelected)="selectVisitor($event.option.value)">
+        <mat-option *ngFor="let visitor of visitorSuggestions" [value]="visitor">
+          {{ visitor.visitor.firstName }} {{ visitor.visitor.lastName}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Company Name</mat-label>
+      <input matInput placeholder="Enter company name" #companyNameInput formControlName="companyName" [matAutocomplete]="autoCompanyName">
+      <mat-autocomplete #autoCompanyName="matAutocomplete" (optionSelected)="selectVisitor($event.option.value)">
+        <mat-option *ngFor="let visitor of visitorSuggestions" [value]="visitor">
+          {{ visitor.visitor.company.companyName }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date of Visit</mat-label>
+      <input matInput placeholder="Date of Visits" formControlName="clockIn" [value]="clockIn" [disabled]="true" />
+    </mat-form-field>
+  </form>
+</div>
+
+
+<div class="dialog-btn" mat-dialog-actions>
+  <button mat-raised-button type="button" (click)="closeDialog()">Cancel</button>
+  <button mat-raised-button type="submit" (click)="submitForm(fullNameInput.value, companyNameInput.value)">Submit</button>
+
+</div>

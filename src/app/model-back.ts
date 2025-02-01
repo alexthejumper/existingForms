@@ -6,7 +6,6 @@ export interface VisitorLogRequest {
     attendeeName: string;
 }
 
-
 export interface VisitorRequest {
     visitorId: string,
     firstName: string;
@@ -68,3 +67,43 @@ export interface BadgeRequest {
   identification: string,
   badgeName: string
 }
+
+export interface VisitorLogResponse {
+  reasonId: string | null;
+  badgeId: string;
+  otherReason: string | null;
+  signature: string | null;
+  clockIn: string;
+  clockOut: string;
+  reason: string | null;
+  visitor: VisitorRequest;
+}
+
+
+export interface VisitorLogRequest2 {
+  reasonId: string;
+  badgeId: string;
+  otherReason: string;
+  signature: string;
+  attendeeName: string;
+  visitor: {
+    firstName: string,
+    lastName: string
+  };
+  company: {
+    companyId: string,
+    companyName: string
+  };
+}
+
+/*export interface VisitorLogResponse2 {
+  id: string;
+  otherReason: string;
+  attendeeName: string;
+  clockIn: Date;
+  clockOut: Date;
+  signature: string;
+  visitor: VisitorRequest;
+  reason: ReasonRequest2;
+  badge: BadgeRequest;
+}*/
