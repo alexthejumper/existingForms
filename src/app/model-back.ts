@@ -24,9 +24,16 @@ export interface ReasonRequest {
     reason: string;
 }
 
+
 export interface ReasonRequest2 {
   reasonId: string;
   reasonName: string;
+  archived: boolean;
+}
+
+export interface ReasonRequest3 {
+  reasonId: string;
+  reason: string;
   archived: boolean;
 }
 
@@ -94,6 +101,23 @@ export interface VisitorLogRequest2 {
     companyId: string,
     companyName: string
   };
+}
+
+
+export interface GetReasonListResponse {
+  reasons: ReasonRequest3[];
+}
+
+export interface VisitorLogRequestTest {
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  contactNumber: string;
+  reasonId: string;
+  badgeId: string;
+  otherReason: string;
+  signature: string;
+  attendeeName: string;
 }
 
 /*export interface VisitorLogResponse2 {

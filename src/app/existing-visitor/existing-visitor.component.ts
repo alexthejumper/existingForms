@@ -1,15 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import { forkJoin, Subject, switchMap, Observable } from 'rxjs';
+import {forkJoin, Subject, switchMap, Observable, take} from 'rxjs';
 import { takeUntil } from 'rxjs';
-import {CompanyRequest, ReasonRequest, VisitorLogRequest, GetReasonResponse, VisitorRequest} from '../model-back';
+import {
+  CompanyRequest,
+  ReasonRequest,
+  VisitorLogRequest,
+  GetReasonResponse,
+  VisitorRequest,
+  ReasonRequest2, GetReasonListResponse, ReasonRequest3, VisitorLogRequestTest
+} from '../model-back';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
 import {CompanyApiService} from '../company-api.service';
 import {BadgeApiService} from '../badge-api.service';
-import {ReasonApiService} from '../reason-api.service';
+import {ReasonApiService, ReasonTest} from '../reason-api.service';
 import {VisitorApiService} from '../visitor-api.service';
 import {SnackbarService} from '../snackbar.service';
 import {QrcodeDialogComponent} from '../qrcode-dialog/qrcode-dialog.component';
@@ -24,6 +31,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
   public registrationForm: FormGroup;
   public showOtherField: boolean = false;
   reason: ReasonRequest[] = [];
+  reasonTypes: ReasonTest[] = [];
   filteredOptions$!: Observable<CompanyRequest[]>;
   qrCodeSuccess = false;
   signatureSuccess = false;
@@ -41,8 +49,10 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
   fullName!: string;
   companyName!: string;
 
-  firstName!: string;
-  lastName!: string;
+  firstName1!: string;
+  lastName1!: string;
+
+  contactNumber!: string;
 
 
   constructor(
@@ -75,7 +85,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       companyId: [],
       companyName: [''],
       signaturePad: [''],
-      badgeId: ['', [Validators.required]],
+      badgeId: ['', /*[Validators.required]*/],
       attendeeName: ['']
     });
   }
@@ -87,20 +97,36 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       switchMap((value) => this.companyApiService.getCompanies(value))
     );
 
-    this.loadReasons();
+    this.loadReasonTypeList();
     //this.loadPrefilledData();
 
     this.route.queryParams.subscribe(params => {
       this.fullName = params['fullName'];
       this.companyName = params['companyName'];
 
-      [this.firstName, this.lastName] = this.fullName.split(' ');
+      [this.firstName1, this.lastName1] = this.fullName.split(' ');
+
+      console.log("yess");
+
+      this.visitorApiService.getContactNumber(this.firstName1, this.lastName1)
+        .subscribe(
+          response => {
+            console.log("Response contactnumber: " + response.contactNumber);
+            this.contactNumber = response.contactNumber;
+          },
+          error => {
+            this.contactNumber = 'Not found';
+          }
+        );
+
+      console.log("yess2");
     });
 
     this.registrationForm.patchValue( {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      companyName: this.companyName
+      firstName: this.firstName1,
+      lastName: this.lastName1,
+      companyName: this.companyName,
+      contactNumber: this.contactNumber
     }    );
 
     console.log("full name: " + this.fullName);
@@ -143,7 +169,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     this.registrationForm.get('lastName')?.disable();
   }
 
-  private loadReasons(): void {
+  /*private loadReasons(): void {
     this.reasonsApiService
     .getReasons(0, 10)
     .pipe(takeUntil(this.destroy$))
@@ -158,7 +184,33 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
         this.snackBarService.open(error.message || 'Failed to load reasons');
       },
     });
+  }*/
+
+  /*private loadReasonTypeList(): void {
+    this.reasonsApiService.getReasonsList()
+      .pipe(take(1)) // Automatically unsubscribes after one response
+      .subscribe({
+        next: (response: GetReasonListResponse) => {
+          console.log("Received reasons list:", response?.reasons);
+          this.reasonTypes = response?.reasons ?? []; // Ensure it's always an array
+        },
+        error: (error) => {
+          console.error("Error fetching reason types:", error);
+        }
+      });
+  }*/
+
+  private loadReasonTypeList() {
+    this.reasonsApiService.getReasonsList().subscribe(
+      (data) => {
+        this.reasonTypes = data;
+      },
+      (error) => {
+        console.error('Error fetching reasons: ', error);
+      }
+    )
   }
+
 
   onCompanySelect(event: MatAutocompleteSelectedEvent): void {
     const selectedCompany = event.option.value;
@@ -178,7 +230,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     this.showOtherField = selectedReasonId === 'otherReason';
 
     if (this.showOtherField) {
-      this.registrationForm.get('reasonId')?.setValue(null);
+      this.registrationForm.get('reasonId')?.setValue('otherReason');
       this.registrationForm.get('otherReason')?.setValidators(Validators.required);
     }
     else {
@@ -194,7 +246,16 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
   }
 
   onSubmit(): void {
+    this.badgeId = "770e8400-e29b-41d4-a716-446655440000";
+
     if (!this.registrationForm.valid) {
+      const invalidControls = Object.keys(this.registrationForm.controls).filter(key =>
+        this.registrationForm.controls[key].invalid
+      );
+
+      console.error('Invalid Fields:', invalidControls);
+
+
       this.snackBarService.open('Please fill in all the required information to proceed.');
       return;
     }
@@ -255,8 +316,11 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
         ? null
         : this.registrationForm.value.reasonId;
 
+    console.log("Reason Id: " + this.registrationForm.value.reasonId)
 
-    console.log(this.registrationForm.value.firstName);
+
+    /*console.log(this.registrationForm.get('firstName')?.value || '');
+    console.log(this.registrationForm.value.lastName);*/
 
     const visitorRequest: VisitorRequest = {
       visitorId: this.visitorId,
@@ -296,21 +360,38 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       attendeeName: this.registrationForm.value.attendeeName
     };
 
+    const visitorLogTestRequest: VisitorLogRequestTest = {
+      firstName: this.registrationForm.get('firstName')?.value || '',
+      lastName: this.registrationForm.get('lastName')?.value || '',
+      companyName: this.registrationForm.get('companyName')?.value || '',
+      contactNumber: this.registrationForm.get('contactNumber')?.value || '',
+      reasonId: reasonId,
+      badgeId: "770e8400-e29b-41d4-a716-446655440000",
+      otherReason: this.registrationForm.get('otherReason')?.value || '',
+      signature: "AlexandreChloe",
+      attendeeName: this.registrationForm.get('attendeeName')?.value || ''
+    };
+
     const createVisitorLog$ = this.visitorApiService.createExistingVisitorLog(visitorLogRequest);
     const updateVisitor$ = this.visitorApiService.updateExistingVisitor(visitorRequest);
 
-    forkJoin([createVisitorLog$, updateVisitor$]).subscribe({
+    const testLog$ = this.visitorApiService.createExistingVisitorLogTest(visitorLogTestRequest);
+
+    testLog$.subscribe({
       next: () => {
+        console.log("create with yesss");
         this.registrationForm.reset();
         this.showOtherField = false;
-        this.snackBarService.open('Visitor log created and visitor updated.');
+        this.snackBarService.open('Visitor log created successfully.');
       },
       error: (error) => {
+        console.error('Error creating visitor log:', error);
         this.snackBarService.open(
-          error.message || 'Failed to create or update visitor log'
+          error.message || 'Failed to create visitor log'
         );
       }
     });
+
 
     this.qrCodeSuccess = false;
     this.signatureSuccess = false;

@@ -1,7 +1,7 @@
 import { Visitor } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { VisitorLogRequest } from './model-back';
+import {VisitorLogRequest, VisitorLogRequestTest} from './model-back';
 import { AppConfigService } from './app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { VisitorRequest } from './model-back';
@@ -27,11 +27,23 @@ export class VisitorApiService {
     );
   }
 
+  createExistingVisitorLogTest(existingVisitorLogRequest: VisitorLogRequestTest): Observable<VisitorLogRequestTest> {
+    return this.httpClient.post<VisitorLogRequestTest>(
+      `${this.visitorBaseUrl}/updateTest`,
+      existingVisitorLogRequest
+    );
+  }
+
   updateExistingVisitor(visitorRequest: VisitorRequest): Observable<VisitorRequest> {
     console.log(visitorRequest.firstName);
     return this.httpClient.put<VisitorRequest>(
       `${this.visitorBaseUrl}/existing-visitor`,
       visitorRequest
     );
+  }
+
+  getContactNumber(firstName: string, lastName: string): Observable<any> {
+    console.log("contact number called");
+    return this.httpClient.get<any>(`${this.visitorBaseUrl}/contact?firstName=${firstName}&lastName=${lastName}`);
   }
 }

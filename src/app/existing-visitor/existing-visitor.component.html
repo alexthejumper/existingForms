@@ -97,6 +97,7 @@ class="form-container"
             class="input-field"
             formControlName="contactNumber"
             id="contact-number"
+            [value]="contactNumber"
             matInput
             type="text"
             />
@@ -116,7 +117,7 @@ class="form-container"
     </div>
 
 
-        <!--<div class="text-field">
+        <div class="text-field">
             <mat-form-field appearance="outline" class="width-100">
                 <mat-label>Visit type</mat-label>
                 <mat-select
@@ -125,7 +126,7 @@ class="form-container"
                 id="Visit-type"
                 >
                 <mat-option disabled value="">Select visit type</mat-option>
-                <mat-option *ngFor="let reason of reason" [value]="reason.reasonId">
+                <mat-option *ngFor="let reason of reasonTypes" [value]="reason.reasonId">
                     {{ reason.reason }}
                 </mat-option>
                 <mat-option value="otherReason">Other Reason</mat-option>
@@ -135,9 +136,9 @@ class="form-container"
                 Details of visit are required
             </mat-error>
             </mat-form-field>
-        </div>-->
+        </div>
 
-      <div class="text-field">
+      <!--<div class="text-field">
         <mat-form-field appearance="outline" class="width-100">
           <mat-label>Visit type</mat-label>
           <mat-select formControlName="reasonId" id="Visit-type">
@@ -150,7 +151,7 @@ class="form-container"
             Details of visit are required
           </mat-error>
         </mat-form-field>
-      </div>
+      </div>-->
 
 
 
