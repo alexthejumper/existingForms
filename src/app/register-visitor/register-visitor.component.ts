@@ -8,11 +8,11 @@ import {
   ReasonRequest,
   VisitorLogRequest2,
 } from '../model-back';
-import {ReasonApiService} from '../reason-api.service';
+import {ReasonApiService, ReasonTest} from '../reason-api.service';
 import {VisitorApiService} from '../visitor-api.service';
 import {BadgeApiService} from '../badge-api.service';
 import {SnackbarService} from '../snackbar.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatSelectChange} from '@angular/material/select';
@@ -34,15 +34,23 @@ export class RegisterVisitorComponent implements OnDestroy, OnInit{
 
 
   filteredOptions$!: Observable<CompanyRequest[]>;
-  companyOptions: CompanyRequest[] = [];
-  reason: ReasonRequest[] = [];
-  reasons: GetReasonResponse | null = null;
-  private subscriptions: Subscription[] = [];
 
   qrCodeSuccess = false;
   signatureSuccess = false;
   badgeId!: string;
   signatureDataUrl!: string;
+
+  isExistingVisitor: boolean = false;
+
+  fullName!: string;
+  companyName!: string;
+
+  firstName1!: string;
+  lastName1!: string;
+
+  contactNumber!: string;
+
+  reasonTypes: ReasonTest[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -52,8 +60,10 @@ export class RegisterVisitorComponent implements OnDestroy, OnInit{
     private badgeApiService: BadgeApiService,
     private readonly snackBarService: SnackbarService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {
+    this.isExistingVisitor = this.route.snapshot.routeConfig?.path === 'existing-visitor';
     this.registrationForm = this.fb.group({
       firstName: [
         '',
@@ -104,10 +114,44 @@ export class RegisterVisitorComponent implements OnDestroy, OnInit{
         filter((value): value is string => !!value && value.length >= 2),
         switchMap((value) => this.companyApiService.getCompanies(value))
       );
-    this.loadReasons();
+
+    /*this.loadReasons();*/
+
+    this.loadReasonTypeList();
+
+    if (this.isExistingVisitor) {
+      this.route.queryParams.subscribe(params => {
+        this.fullName = params['fullName'];
+        this.companyName = params['companyName'];
+
+        [this.firstName1, this.lastName1] = this.fullName.split(' ');
+
+        console.log("yes");
+
+        this.visitorApiService.getContactNumber(this.firstName1, this.lastName1)
+          .subscribe(
+            response => {
+              console.log("Response contact number: " + response.contactNumber);
+              this.contactNumber = response.contactNumber;
+            },
+            error => {
+              this.contactNumber = 'Not found';
+            }
+          );
+
+        console.log("yes2");
+      });
+
+      this.registrationForm.patchValue( {
+        firstName: this.firstName1,
+        lastName: this.lastName1,
+        companyName: this.companyName,
+        contactNumber: this.contactNumber
+      }    );
+    }
   }
 
-  private loadReasons() {
+  /*private loadReasons() {
     this.reasonApiService
       .getReasons(0, 10)
       .pipe(takeUntil(this.destroy$))
@@ -122,6 +166,17 @@ export class RegisterVisitorComponent implements OnDestroy, OnInit{
           this.showErrorSnackBar(error.message || 'Failed to load reasons');
         }
       });
+  }*/
+
+  private loadReasonTypeList() {
+    this.reasonApiService.getReasonsList().subscribe(
+      (data) => {
+        this.reasonTypes = data;
+      },
+      (error) => {
+        console.error('Error fetching reasons: ', error);
+      }
+    )
   }
 
   onCompanySelect(event: MatAutocompleteSelectedEvent): void {

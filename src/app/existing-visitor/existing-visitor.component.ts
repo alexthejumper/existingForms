@@ -132,7 +132,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     console.log("full name: " + this.fullName);
   }
 
-  loadPrefilledData(): void {
+  /*loadPrefilledData(): void {
     const fetchedData = {
       firstName: 'John',
       lastName: 'Doe',
@@ -167,7 +167,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
 
     this.registrationForm.get('firstName')?.disable();
     this.registrationForm.get('lastName')?.disable();
-  }
+  }*/
 
   /*private loadReasons(): void {
     this.reasonsApiService
@@ -322,7 +322,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
     /*console.log(this.registrationForm.get('firstName')?.value || '');
     console.log(this.registrationForm.value.lastName);*/
 
-    const visitorRequest: VisitorRequest = {
+    /*const visitorRequest: VisitorRequest = {
       visitorId: this.visitorId,
       firstName: this.registrationForm.get('firstName')?.value || '',
       lastName: this.registrationForm.get('lastNam')?.value || '',
@@ -358,7 +358,7 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       },
       signature: this.signatureDataUrl,
       attendeeName: this.registrationForm.value.attendeeName
-    };
+    };*/
 
     const visitorLogTestRequest: VisitorLogRequestTest = {
       firstName: this.registrationForm.get('firstName')?.value || '',
@@ -372,8 +372,8 @@ export class ExistingVisitorComponent implements OnDestroy, OnInit {
       attendeeName: this.registrationForm.get('attendeeName')?.value || ''
     };
 
-    const createVisitorLog$ = this.visitorApiService.createExistingVisitorLog(visitorLogRequest);
-    const updateVisitor$ = this.visitorApiService.updateExistingVisitor(visitorRequest);
+    /*const createVisitorLog$ = this.visitorApiService.createExistingVisitorLog(visitorLogRequest);
+    const updateVisitor$ = this.visitorApiService.updateExistingVisitor(visitorRequest);*/
 
     const testLog$ = this.visitorApiService.createExistingVisitorLogTest(visitorLogTestRequest);
 

@@ -3,7 +3,7 @@
 [formGroup]="registrationForm"
 class="form-container"
 >
-  <h2 class="heading-visitor">NEW VISITOR CHECK IN</h2>
+  <h2 class="heading-visitor">{{ isExistingVisitor ? 'EXISTING VISITOR' : 'NEW VISITOR CHECK IN'}}</h2>
 
   <mat-divider class="divider-line"></mat-divider>
 
@@ -84,6 +84,7 @@ class="form-container"
           id="contact-number"
           class="input-field"
           formControlName="contactNumber"
+          [value]="contactNumber"
           matInput
           type="text"
         />
@@ -102,7 +103,7 @@ class="form-container"
       </mat-form-field>
     </div>
 
-    <div class="text-field">
+    <!--<div class="text-field">
       <mat-form-field appearance="outline" class="width-100">
         <mat-label>Visit Type</mat-label>
         <mat-select
@@ -124,6 +125,27 @@ class="form-container"
         *ngIf="registrationForm.get('reasonId')?.hasError('required')"
         >
           Details of Visit are required
+        </mat-error>
+      </mat-form-field>
+    </div>-->
+
+    <div class="text-field">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label>Visit type</mat-label>
+        <mat-select
+          (selectionChange)="onReasonsOfVisitChange($event)"
+          formControlName="reasonId"
+          id="visit-type"
+        >
+          <mat-option disabled value="">Select visit type</mat-option>
+          <mat-option *ngFor="let reason of reasonTypes" [value]="reason.reasonId">
+            {{ reason.reason }}
+          </mat-option>
+          <mat-option value="otherReason">Other Reason</mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="registrationForm.get('reasonId')?.hasError('required')">
+          Details of visit are required
         </mat-error>
       </mat-form-field>
     </div>
